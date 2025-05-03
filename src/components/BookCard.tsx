@@ -7,7 +7,7 @@ import { ShoppingCart, Heart, Loader2, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, generateRandomPrice } from "@/lib/utils";
 
 export interface BookProps {
   id: string;
@@ -36,13 +36,19 @@ const BookCard: React.FC<BookProps> = ({
   const { user } = useAuth();
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const [displayPrice, setDisplayPrice] = useState<number>(price);
+  
   useEffect(() => {
+    // Ensure price is always between 250-999
+    if (price < 250 || price > 999) {
+      setDisplayPrice(generateRandomPrice());
+    }
+    
     // Check if the book is saved by the user when component mounts
     if (user) {
       checkSavedStatus();
     }
-  }, [user, id]);
+  }, [user, id, price]);
 
   const getConditionColor = (condition: string) => {
     switch (condition.toLowerCase()) {
@@ -194,7 +200,7 @@ const BookCard: React.FC<BookProps> = ({
               {condition}
             </Badge>
             <Badge variant="outline" className="bg-white/80 backdrop-blur-sm shadow-sm">
-              {formatPrice(price)}
+              {formatPrice(displayPrice)}
             </Badge>
           </div>
           

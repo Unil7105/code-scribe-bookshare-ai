@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Loader2, Heart, Trash2, ArrowRight } from "lucide-react";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, generateRandomPrice } from "@/lib/utils";
 
 interface SavedBook {
   id: string;
@@ -60,7 +60,19 @@ const SavedBooks = () => {
 
       if (error) throw error;
       
-      setSavedBooks(data as SavedBook[]);
+      // Adjust prices to be 3 digits in range 250-999
+      const adjustedData = data?.map(item => {
+        const price = item.book?.price || 0;
+        return {
+          ...item,
+          book: {
+            ...item.book,
+            price: (price < 250 || price > 999) ? generateRandomPrice() : price
+          }
+        };
+      });
+      
+      setSavedBooks(adjustedData as SavedBook[]);
     } catch (error) {
       console.error("Error fetching saved books:", error);
       toast({

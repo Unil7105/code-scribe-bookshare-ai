@@ -10,3 +10,8 @@ export function cn(...inputs: ClassValue[]) {
 export function formatPrice(price: number): string {
   return `₹${Math.round(price)}`;
 }
+
+// Generate a random price between 250-999
+export function generateRandomPrice(): number {
+  return Math.floor(Math.random() * (999 - 250 + 1)) + 250;
+}

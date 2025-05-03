@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Loader2, Trash2, ShoppingCart, ArrowRight } from "lucide-react";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, generateRandomPrice } from "@/lib/utils";
 
 interface CartItem {
   id: string;
@@ -64,7 +64,19 @@ const Cart = () => {
 
       if (error) throw error;
       
-      setCartItems(data as CartItem[]);
+      // Adjust prices to be 3 digits in range 250-999
+      const adjustedData = data?.map(item => {
+        const price = item.book?.price || 0;
+        return {
+          ...item,
+          book: {
+            ...item.book,
+            price: (price < 250 || price > 999) ? generateRandomPrice() : price
+          }
+        };
+      });
+      
+      setCartItems(adjustedData as CartItem[]);
     } catch (error) {
       console.error("Error fetching cart:", error);
       toast({

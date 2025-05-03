@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, BookPlus, Filter, Search } from "lucide-react";
 import BookCard from "@/components/BookCard";
 import { Badge } from "@/components/ui/badge";
+import { generateRandomPrice } from "@/lib/utils";
 
 interface Book {
   id: string;
@@ -46,7 +47,13 @@ const Books = () => {
         throw error;
       }
       
-      setBooks(data as Book[]);
+      // Ensure all book prices are within 250-999 range
+      const adjustedBooks = data.map(book => ({
+        ...book,
+        price: (book.price < 250 || book.price > 999) ? generateRandomPrice() : book.price
+      }));
+      
+      setBooks(adjustedBooks as Book[]);
     } catch (error) {
       console.error("Error fetching books:", error);
     } finally {
