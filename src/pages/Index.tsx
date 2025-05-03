@@ -13,9 +13,9 @@ const Index: React.FC = () => {
       <Navbar />
       <main className="flex-grow">
         <Hero />
-        <FeaturedBooks title="Featured Books" books={featuredBooks} />
+        <FeaturedBooks title="Featured Books" books={featuredBooks.slice(0, 5)} />
         <HowItWorks />
-        <FeaturedBooks title="Recently Added" books={recentlyAddedBooks} />
+        <FeaturedBooks title="Recently Added" books={recentlyAddedBooks.slice(0, 5)} />
       </main>
       <Footer />
     </div>
