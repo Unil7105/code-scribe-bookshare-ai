@@ -1,0 +1,98 @@
+
+import { BookProps } from '@/components/BookCard';
+
+export const featuredBooks: BookProps[] = [
+  {
+    id: '1',
+    title: 'Introduction to Computer Science',
+    author: 'John Smith',
+    price: 45.99,
+    condition: 'Like New',
+    category: 'Computer Science',
+    coverImage: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=700&q=80',
+  },
+  {
+    id: '2',
+    title: 'Calculus: Early Transcendentals',
+    author: 'James Stewart',
+    price: 65.50,
+    condition: 'Good',
+    category: 'Mathematics',
+    coverImage: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=700&q=80',
+  },
+  {
+    id: '3',
+    title: 'Principles of Economics',
+    author: 'N. Gregory Mankiw',
+    price: 40.00,
+    condition: 'Acceptable',
+    category: 'Economics',
+    coverImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=700&q=80',
+  },
+  {
+    id: '4',
+    title: 'Biology: The Unity and Diversity of Life',
+    author: 'Cecie Starr',
+    price: 55.75,
+    condition: 'Very Good',
+    category: 'Biology',
+    coverImage: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=700&q=80',
+  },
+  {
+    id: '5',
+    title: 'Chemistry: The Central Science',
+    author: 'Brown & LeMay',
+    price: 72.25,
+    condition: 'New',
+    category: 'Chemistry',
+    coverImage: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=700&q=80',
+  },
+];
+
+export const recentlyAddedBooks: BookProps[] = [
+  {
+    id: '6',
+    title: 'Psychology: An Introduction',
+    author: 'Benjamin Lahey',
+    price: 38.99,
+    condition: 'Good',
+    category: 'Psychology',
+    coverImage: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=700&q=80',
+  },
+  {
+    id: '7',
+    title: 'Engineering Mechanics: Statics',
+    author: 'Russell C. Hibbeler',
+    price: 75.50,
+    condition: 'Like New',
+    category: 'Engineering',
+    coverImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=700&q=80',
+  },
+  {
+    id: '8',
+    title: 'Introduction to Algorithms',
+    author: 'Thomas H. Cormen',
+    price: 80.00,
+    condition: 'Very Good',
+    category: 'Computer Science',
+    coverImage: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=700&q=80',
+  },
+  {
+    id: '9',
+    title: 'Organic Chemistry',
+    author: 'Paula Yurkanis Bruice',
+    price: 62.25,
+    condition: 'Acceptable',
+    category: 'Chemistry',
+    coverImage: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=700&q=80',
+  },
+  {
+    id: '10',
+    title: 'Fundamentals of Physics',
+    author: 'Halliday & Resnick',
+    price: 70.75,
+    condition: 'Good',
+    category: 'Physics',
+    coverImage: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=700&q=80',
+  },
+];
