@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Loader2, Heart, Trash2, ArrowRight } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
 
 interface SavedBook {
   id: string;
@@ -173,7 +173,7 @@ const SavedBooks = () => {
                     </Button>
                   </div>
                   <div className="flex justify-between items-center mt-2">
-                    <span className="font-bold">${savedBook.book.price.toFixed(2)}</span>
+                    <span className="font-bold">{formatPrice(savedBook.book.price)}</span>
                     <span className="text-xs px-2 py-1 rounded-full bg-secondary">
                       {savedBook.book.condition}
                     </span>

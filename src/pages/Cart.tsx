@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Loader2, Trash2, ShoppingCart, ArrowRight } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
 
 interface CartItem {
   id: string;
@@ -164,7 +165,7 @@ const Cart = () => {
                       </div>
                     </div>
                     <div className="flex justify-between items-center mt-2">
-                      <span className="font-bold">${item.book.price.toFixed(2)}</span>
+                      <span className="font-bold">{formatPrice(item.book.price)}</span>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -190,7 +191,7 @@ const Cart = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Items ({cartItems.length})</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>{formatPrice(totalPrice)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
@@ -199,7 +200,7 @@ const Cart = () => {
                   <div className="border-t pt-2 mt-2">
                     <div className="flex justify-between font-bold">
                       <span>Total</span>
-                      <span>${totalPrice.toFixed(2)}</span>
+                      <span>{formatPrice(totalPrice)}</span>
                     </div>
                   </div>
                 </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +7,7 @@ import { ShoppingCart, Heart, Loader2, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { formatPrice } from "@/lib/utils";
 
 export interface BookProps {
   id: string;
@@ -194,7 +194,7 @@ const BookCard: React.FC<BookProps> = ({
               {condition}
             </Badge>
             <Badge variant="outline" className="bg-white/80 backdrop-blur-sm shadow-sm">
-              ₹{price.toFixed(3)}
+              {formatPrice(price)}
             </Badge>
           </div>
           
