@@ -32,7 +32,7 @@ const FeaturedBooks: React.FC<FeaturedBooksProps> = ({ title, books, viewAllLink
             <BookCard 
               key={book.id} 
               {...book} 
-              showActions={false} 
+              showActions={true}
             />
           ))}
         </div>
