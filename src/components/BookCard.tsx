@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Heart, Loader2 } from "lucide-react";
+import { ShoppingCart, Heart, Loader2, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +18,7 @@ export interface BookProps {
   category: string;
   coverImage: string;
   showActions?: boolean;
+  listingType?: string;
 }
 
 const BookCard: React.FC<BookProps> = ({
@@ -29,6 +30,7 @@ const BookCard: React.FC<BookProps> = ({
   category,
   coverImage,
   showActions = false,
+  listingType = "sale",
 }) => {
   const { toast } = useToast();
   const { user } = useAuth();
@@ -192,9 +194,20 @@ const BookCard: React.FC<BookProps> = ({
               {condition}
             </Badge>
             <Badge variant="outline" className="bg-white/80 backdrop-blur-sm shadow-sm">
-              ${price.toFixed(2)}
+              ₹{price.toFixed(2)}
             </Badge>
           </div>
+          
+          {listingType === "replacement" && (
+            <div className="absolute bottom-0 right-0 left-0 p-2">
+              <Badge 
+                variant="default" 
+                className="w-full flex items-center justify-center gap-1 bg-purple-500 hover:bg-purple-600"
+              >
+                <RefreshCw className="h-3.5 w-3.5" /> For Replacement
+              </Badge>
+            </div>
+          )}
         </div>
         <CardContent className="pt-4 flex-grow">
           <h3 className="font-semibold text-lg line-clamp-2 mb-1">{title}</h3>
@@ -205,7 +218,7 @@ const BookCard: React.FC<BookProps> = ({
         </CardContent>
       </Link>
       
-      {showActions && (
+      {showActions && listingType !== "replacement" && (
         <CardFooter className="pt-0 pb-4 flex justify-between gap-2">
           <Button 
             variant="outline" 
@@ -227,6 +240,25 @@ const BookCard: React.FC<BookProps> = ({
             ) : (
               <Heart className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} />
             )}
+          </Button>
+        </CardFooter>
+      )}
+      
+      {showActions && listingType === "replacement" && (
+        <CardFooter className="pt-0 pb-4">
+          <Button 
+            variant="outline"
+            size="sm"
+            onClick={toggleSaveBook}
+            disabled={isLoading}
+            className={`w-full ${isSaved ? "text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600" : ""}`}
+          >
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <Heart className={`h-4 w-4 mr-2 ${isSaved ? "fill-current" : ""}`} />
+            )}
+            {isSaved ? "Saved" : "Save for Exchange"}
           </Button>
         </CardFooter>
       )}
