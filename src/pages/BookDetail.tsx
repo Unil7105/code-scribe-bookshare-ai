@@ -1,12 +1,13 @@
 
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { Loader2, Heart, ShoppingCart, Share2, ArrowLeft } from "lucide-react";
+import { Loader2, Heart, ShoppingCart, Share2, ArrowLeft, Check } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface Book {
   id: string;
@@ -30,6 +31,7 @@ const BookDetail = () => {
   const [saveLoading, setSaveLoading] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -114,6 +116,7 @@ const BookDetail = () => {
         description: "Please sign in to add books to your cart",
         variant: "destructive",
       });
+      navigate("/auth");
       return;
     }
 
@@ -169,6 +172,7 @@ const BookDetail = () => {
         description: "Please sign in to save books",
         variant: "destructive",
       });
+      navigate("/auth");
       return;
     }
 
@@ -217,6 +221,26 @@ const BookDetail = () => {
     }
   }
 
+  function handleBuyNow() {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to purchase books",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
+    
+    // Add to cart if not already there
+    if (!isInCart) {
+      handleAddToCart();
+    }
+    
+    // Navigate to cart/checkout
+    navigate("/cart");
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -256,7 +280,7 @@ const BookDetail = () => {
         </Link>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-muted rounded-lg overflow-hidden">
+          <div className="bg-muted rounded-lg overflow-hidden shadow-md">
             <img
               src={book.cover_image || "/placeholder.svg"}
               alt={book.title}
@@ -265,62 +289,77 @@ const BookDetail = () => {
           </div>
           
           <div>
+            <div className="flex flex-wrap gap-2 mb-2">
+              <Badge variant="outline" className="bg-primary/10 text-primary">
+                {book.category}
+              </Badge>
+              <Badge variant="secondary">
+                {book.condition}
+              </Badge>
+            </div>
+            
             <h1 className="text-3xl font-bold">{book.title}</h1>
             <p className="text-xl text-muted-foreground mb-4">by {book.author}</p>
             
-            <div className="mb-6">
-              <div className="inline-block bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm mb-2">
-                {book.condition}
-              </div>
-              <div className="inline-block bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm mb-2 ml-2">
-                {book.category}
-              </div>
-            </div>
+            <div className="text-3xl font-bold mb-6 text-primary">${book.price.toFixed(2)}</div>
             
-            <div className="text-3xl font-bold mb-6">${book.price.toFixed(2)}</div>
-            
-            <div className="flex flex-wrap gap-3 mb-8">
+            <div className="flex flex-col space-y-4 mb-8">
               <Button 
-                className="flex-1" 
-                onClick={handleAddToCart}
-                disabled={cartLoading}
+                className="w-full" 
+                size="lg"
+                onClick={handleBuyNow}
               >
-                {cartLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                ) : (
-                  <ShoppingCart className="h-5 w-5 mr-2" />
-                )}
-                {isInCart ? "Remove from Cart" : "Add to Cart"}
+                Buy Now
               </Button>
               
-              <Button 
-                variant="outline" 
-                onClick={handleSaveBook}
-                disabled={saveLoading}
-              >
-                {saveLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                ) : (
-                  <Heart 
-                    className={`h-5 w-5 mr-2 ${isSaved ? "fill-current text-red-500" : ""}`} 
-                  />
-                )}
-                {isSaved ? "Saved" : "Save"}
-              </Button>
-              
-              <Button variant="outline" onClick={() => {
-                navigator.share({
-                  title: book.title,
-                  text: `Check out ${book.title} by ${book.author} on BookShare!`,
-                  url: window.location.href
-                }).catch(err => console.error('Error sharing:', err));
-              }}>
-                <Share2 className="h-5 w-5" />
-              </Button>
+              <div className="flex gap-4">
+                <Button 
+                  variant={isInCart ? "secondary" : "outline"} 
+                  className="flex-1" 
+                  onClick={handleAddToCart}
+                  disabled={cartLoading}
+                >
+                  {cartLoading ? (
+                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                  ) : isInCart ? (
+                    <Check className="h-5 w-5 mr-2" />
+                  ) : (
+                    <ShoppingCart className="h-5 w-5 mr-2" />
+                  )}
+                  {isInCart ? "In Cart" : "Add to Cart"}
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  onClick={handleSaveBook}
+                  disabled={saveLoading}
+                >
+                  {saveLoading ? (
+                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                  ) : (
+                    <Heart 
+                      className={`h-5 w-5 mr-2 ${isSaved ? "fill-current text-red-500" : ""}`} 
+                    />
+                  )}
+                  {isSaved ? "Saved" : "Save"}
+                </Button>
+                
+                <Button variant="outline" onClick={() => {
+                  navigator.share({
+                    title: book.title,
+                    text: `Check out ${book.title} by ${book.author} on BookShare!`,
+                    url: window.location.href
+                  }).catch(err => console.error('Error sharing:', err));
+                }}>
+                  <Share2 className="h-5 w-5" />
+                </Button>
+              </div>
             </div>
             
             <h2 className="text-xl font-semibold mb-2">Description</h2>
-            <p className="text-muted-foreground">{book.description || "No description available"}</p>
+            <div className="bg-muted/50 p-4 rounded-lg">
+              <p className="text-muted-foreground">{book.description || "No description available"}</p>
+            </div>
           </div>
         </div>
       </div>

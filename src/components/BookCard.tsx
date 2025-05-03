@@ -3,6 +3,11 @@ import React from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart, Heart } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface BookProps {
   id: string;
@@ -12,6 +17,7 @@ export interface BookProps {
   condition: string;
   category: string;
   coverImage: string;
+  showActions?: boolean;
 }
 
 const BookCard: React.FC<BookProps> = ({
@@ -22,7 +28,11 @@ const BookCard: React.FC<BookProps> = ({
   condition,
   category,
   coverImage,
+  showActions = false,
 }) => {
+  const { toast } = useToast();
+  const { user } = useAuth();
+  
   const getConditionColor = (condition: string) => {
     switch (condition.toLowerCase()) {
       case "new":
@@ -40,33 +50,90 @@ const BookCard: React.FC<BookProps> = ({
     }
   };
 
+  const addToCart = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation
+    e.stopPropagation(); // Prevent event bubbling
+    
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to add items to your cart",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.from("cart_items").insert({
+        user_id: user.id,
+        book_id: id,
+      });
+
+      if (error) throw error;
+      
+      toast({
+        title: "Added to cart",
+        description: `${title} has been added to your cart`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add to cart",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
-    <Link to={`/books/${id}`}>
-      <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg hover:translate-y-[-5px] h-full flex flex-col">
-        <div className="aspect-[3/4] overflow-hidden">
+    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:translate-y-[-5px] h-full flex flex-col">
+      <Link to={`/books/${id}`} className="flex-1 flex flex-col">
+        <div className="aspect-[3/4] relative overflow-hidden">
           <img
-            src={coverImage}
+            src={coverImage || "/placeholder.svg"}
             alt={`${title} by ${author}`}
-            className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
           />
-        </div>
-        <CardContent className="pt-4 flex-grow">
-          <div className="flex justify-between items-start mb-2">
-            <Badge variant="secondary" className={getConditionColor(condition)}>
+          <div className="absolute top-0 left-0 w-full flex justify-between p-2">
+            <Badge variant="secondary" className={`${getConditionColor(condition)} shadow-sm`}>
               {condition}
             </Badge>
-            <span className="font-bold text-lg">${price.toFixed(2)}</span>
+            <Badge variant="outline" className="bg-white/80 backdrop-blur-sm shadow-sm">
+              ${price.toFixed(2)}
+            </Badge>
           </div>
-          <h3 className="font-semibold text-lg line-clamp-2">{title}</h3>
-          <p className="text-muted-foreground text-sm">{author}</p>
-        </CardContent>
-        <CardFooter className="pt-0 pb-3">
-          <Badge variant="outline" className="text-xs">
+        </div>
+        <CardContent className="pt-4 flex-grow">
+          <h3 className="font-semibold text-lg line-clamp-2 mb-1">{title}</h3>
+          <p className="text-muted-foreground text-sm">by {author}</p>
+          <Badge variant="outline" className="text-xs mt-2">
             {category}
           </Badge>
+        </CardContent>
+      </Link>
+      
+      {showActions && (
+        <CardFooter className="pt-0 pb-4 flex justify-between gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1"
+            onClick={addToCart}
+          >
+            <ShoppingCart className="h-4 w-4 mr-2" /> Add to Cart
+          </Button>
+          <Button 
+            variant="outline"
+            size="sm"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            <Heart className="h-4 w-4" />
+          </Button>
         </CardFooter>
-      </Card>
-    </Link>
+      )}
+    </Card>
   );
 };
 
