@@ -1,6 +1,8 @@
 
 import React from "react";
 import { Book, MessageCircle, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const HowItWorks: React.FC = () => {
   const steps = [
