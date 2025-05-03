@@ -33,6 +33,12 @@ const BookDetail = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  // Helper function to convert numeric IDs to valid UUIDs
+  const getValidUuid = (id: string | undefined): string => {
+    if (!id) return "";
+    return isNaN(Number(id)) ? id : `00000000-0000-0000-0000-${id.padStart(12, '0')}`;
+  };
+
   useEffect(() => {
     if (id) {
       fetchBook(id);
@@ -48,10 +54,12 @@ const BookDetail = () => {
 
   async function fetchBook(bookId: string) {
     try {
+      const validBookId = getValidUuid(bookId);
+      
       const { data, error } = await supabase
         .from("books")
         .select("*")
-        .eq("id", bookId)
+        .eq("id", validBookId)
         .single();
 
       if (error) {
@@ -75,11 +83,13 @@ const BookDetail = () => {
     if (!user || !book) return;
     
     try {
+      const validBookId = getValidUuid(book.id);
+      
       const { data, error } = await supabase
         .from("cart_items")
         .select("*")
         .eq("user_id", user.id)
-        .eq("book_id", book.id)
+        .eq("book_id", validBookId)
         .maybeSingle();
 
       if (error) throw error;
@@ -94,11 +104,13 @@ const BookDetail = () => {
     if (!user || !book) return;
     
     try {
+      const validBookId = getValidUuid(book.id);
+      
       const { data, error } = await supabase
         .from("saved_books")
         .select("*")
         .eq("user_id", user.id)
-        .eq("book_id", book.id)
+        .eq("book_id", validBookId)
         .maybeSingle();
 
       if (error) throw error;
@@ -123,13 +135,15 @@ const BookDetail = () => {
     setCartLoading(true);
     
     try {
+      const validBookId = getValidUuid(book.id);
+      
       if (isInCart) {
         // Remove from cart
         const { error } = await supabase
           .from("cart_items")
           .delete()
           .eq("user_id", user.id)
-          .eq("book_id", book.id);
+          .eq("book_id", validBookId);
 
         if (error) throw error;
         
@@ -142,7 +156,7 @@ const BookDetail = () => {
         // Add to cart
         const { error } = await supabase.from("cart_items").insert({
           user_id: user.id,
-          book_id: book.id,
+          book_id: validBookId,
         });
 
         if (error) throw error;
@@ -179,13 +193,15 @@ const BookDetail = () => {
     setSaveLoading(true);
     
     try {
+      const validBookId = getValidUuid(book.id);
+      
       if (isSaved) {
         // Unsave book
         const { error } = await supabase
           .from("saved_books")
           .delete()
           .eq("user_id", user.id)
-          .eq("book_id", book.id);
+          .eq("book_id", validBookId);
 
         if (error) throw error;
         
@@ -198,7 +214,7 @@ const BookDetail = () => {
         // Save book
         const { error } = await supabase.from("saved_books").insert({
           user_id: user.id,
-          book_id: book.id,
+          book_id: validBookId,
         });
 
         if (error) throw error;
@@ -282,8 +298,8 @@ const BookDetail = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-muted rounded-lg overflow-hidden shadow-md">
             <img
-              src={book.cover_image || "/placeholder.svg"}
-              alt={book.title}
+              src={book?.cover_image || "/placeholder.svg"}
+              alt={book?.title}
               className="w-full h-full object-contain aspect-[3/4]"
             />
           </div>
@@ -291,17 +307,17 @@ const BookDetail = () => {
           <div>
             <div className="flex flex-wrap gap-2 mb-2">
               <Badge variant="outline" className="bg-primary/10 text-primary">
-                {book.category}
+                {book?.category}
               </Badge>
               <Badge variant="secondary">
-                {book.condition}
+                {book?.condition}
               </Badge>
             </div>
             
-            <h1 className="text-3xl font-bold">{book.title}</h1>
-            <p className="text-xl text-muted-foreground mb-4">by {book.author}</p>
+            <h1 className="text-3xl font-bold">{book?.title}</h1>
+            <p className="text-xl text-muted-foreground mb-4">by {book?.author}</p>
             
-            <div className="text-3xl font-bold mb-6 text-primary">${book.price.toFixed(2)}</div>
+            <div className="text-3xl font-bold mb-6 text-primary">${book?.price?.toFixed(2)}</div>
             
             <div className="flex flex-col space-y-4 mb-8">
               <Button 
@@ -346,8 +362,8 @@ const BookDetail = () => {
                 
                 <Button variant="outline" onClick={() => {
                   navigator.share({
-                    title: book.title,
-                    text: `Check out ${book.title} by ${book.author} on BookShare!`,
+                    title: book?.title,
+                    text: `Check out ${book?.title} by ${book?.author} on BookShare!`,
                     url: window.location.href
                   }).catch(err => console.error('Error sharing:', err));
                 }}>
@@ -358,7 +374,7 @@ const BookDetail = () => {
             
             <h2 className="text-xl font-semibold mb-2">Description</h2>
             <div className="bg-muted/50 p-4 rounded-lg">
-              <p className="text-muted-foreground">{book.description || "No description available"}</p>
+              <p className="text-muted-foreground">{book?.description || "No description available"}</p>
             </div>
           </div>
         </div>

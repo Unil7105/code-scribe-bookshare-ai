@@ -63,11 +63,14 @@ const BookCard: React.FC<BookProps> = ({
     if (!user) return;
     
     try {
+      // Convert numeric IDs to valid UUIDs if needed
+      const bookId = isNaN(Number(id)) ? id : `00000000-0000-0000-0000-${id.padStart(12, '0')}`;
+      
       const { data, error } = await supabase
         .from("saved_books")
         .select("*")
         .eq("user_id", user.id)
-        .eq("book_id", id)
+        .eq("book_id", bookId)
         .maybeSingle();
 
       if (error) throw error;
@@ -92,9 +95,12 @@ const BookCard: React.FC<BookProps> = ({
     }
 
     try {
+      // Convert numeric IDs to valid UUIDs if needed
+      const bookId = isNaN(Number(id)) ? id : `00000000-0000-0000-0000-${id.padStart(12, '0')}`;
+
       const { error } = await supabase.from("cart_items").insert({
         user_id: user.id,
-        book_id: id,
+        book_id: bookId,
       });
 
       if (error) throw error;
@@ -128,13 +134,16 @@ const BookCard: React.FC<BookProps> = ({
     setIsLoading(true);
     
     try {
+      // Convert numeric IDs to valid UUIDs if needed
+      const bookId = isNaN(Number(id)) ? id : `00000000-0000-0000-0000-${id.padStart(12, '0')}`;
+      
       if (isSaved) {
         // Remove from saved books
         const { error } = await supabase
           .from("saved_books")
           .delete()
           .eq("user_id", user.id)
-          .eq("book_id", id);
+          .eq("book_id", bookId);
 
         if (error) throw error;
         
@@ -147,7 +156,7 @@ const BookCard: React.FC<BookProps> = ({
         // Add to saved books
         const { error } = await supabase.from("saved_books").insert({
           user_id: user.id,
-          book_id: id,
+          book_id: bookId,
         });
 
         if (error) throw error;

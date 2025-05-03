@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +26,12 @@ const Cart = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Helper function to convert numeric IDs to valid UUIDs
+  const getValidUuid = (id: string | undefined): string => {
+    if (!id) return "";
+    return isNaN(Number(id)) ? id : `00000000-0000-0000-0000-${id.padStart(12, '0')}`;
+  };
 
   useEffect(() => {
     if (user) {
