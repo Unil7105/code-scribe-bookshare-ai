@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, BookPlus } from "lucide-react";
 
 const AddBook = () => {
   const { user } = useAuth();
@@ -197,7 +197,7 @@ const AddBook = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price ($)</Label>
+                  <Label htmlFor="price">Price (₹)</Label>
                   <Input
                     id="price"
                     name="price"
@@ -285,7 +285,10 @@ const AddBook = () => {
                     Adding Book...
                   </>
                 ) : (
-                  "List Book"
+                  <>
+                    <BookPlus className="mr-2 h-5 w-5" />
+                    List Book
+                  </>
                 )}
               </Button>
             </form>
@@ -316,7 +319,7 @@ const AddBook = () => {
                 </p>
                 <div className="flex justify-between items-center mt-2">
                   <span className="font-bold">
-                    ${formData.price ? parseFloat(formData.price).toFixed(2) : "0.00"}
+                    ₹{formData.price ? parseFloat(formData.price).toFixed(3) : "0.000"}
                   </span>
                   {formData.condition && (
                     <span className="text-xs px-2 py-1 rounded-full bg-secondary">

@@ -194,7 +194,7 @@ const BookCard: React.FC<BookProps> = ({
               {condition}
             </Badge>
             <Badge variant="outline" className="bg-white/80 backdrop-blur-sm shadow-sm">
-              ₹{price.toFixed(2)}
+              ₹{price.toFixed(3)}
             </Badge>
           </div>
           
